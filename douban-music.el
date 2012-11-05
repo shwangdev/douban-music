@@ -86,6 +86,7 @@ feed data to music player")
   )
 
 (defun douban-music-play-song ()
+  (interactive)
   (let ((song ))
     (setq current-song (douban-music-pop-song-from-store))
     (setq song current-song)
@@ -94,10 +95,10 @@ feed data to music player")
   )
 
 (defun douban-music-current-song-info ()
+  (interactive)
   (
    princ current-song   
    )
   )
-
 
 (provide 'douban-music)
