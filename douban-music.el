@@ -85,6 +85,15 @@ feed data to music player")
     )
   )
 
+(defun play-music-filter ( proc string)
+  (if (string-match "finished" string)
+      (progn
+         (kill-douban-music-process)
+         (douban-music-play-song)
+         )
+   )
+  )
+
 (defun douban-music-play-song ()
   (interactive)
   (let ((song )
@@ -98,7 +107,11 @@ feed data to music player")
         (progn
           (setq current-song (douban-music-pop-song-from-store))
           (setq song current-song)
-          (start-process "douban-music-proc" nil "mpg123" (aget song 'url))
+          (set-process-filter
+           (start-process "douban-music-proc" nil "mpg123" (aget song 'url))
+           'play-music-filter
+           )
+          
           )
       (message "Current Music is playing.")
       )
