@@ -87,12 +87,43 @@ feed data to music player")
 
 (defun douban-music-play-song ()
   (interactive)
-  (let ((song ))
-    (setq current-song (douban-music-pop-song-from-store))
-    (setq song current-song)
-    (start-process "mpg321" nil "mpg321" (aget song 'url))
+  (let ((song )
+        (is-play nil))
+    (dolist (elt (process-list))
+      (if (string-match "douban-music-proc<?[0-9]*>?" (process-name elt))
+          (setq is-play t)
+          )
+      )
+    (if ( eq is-play nil)
+        (progn
+          (setq current-song (douban-music-pop-song-from-store))
+          (setq song current-song)
+          (start-process "douban-music-proc" nil "mpg123" (aget song 'url))
+          )
+      (message "Current Music is playing.")
+      )
     )
   )
+
+(defun douban-music-stop-play ()
+  (interactive)
+  (kill-douban-music-process)
+  )
+
+(defun douban-music-play-next-song ()
+  (interactive)
+  (kill-douban-music-process)
+  (douban-music-play-song)
+  )
+
+(defun kill-douban-music-process ()
+  " kill all sydio process, ie. process name matchs
+  \"sydio-proc<?[0-9]*>?\"
+"
+  (dolist (elt (process-list))
+    (if (string-match "douban-music-proc<?[0-9]*>?" (process-name elt))
+        (delete-process elt))))
+
 
 (defun douban-music-current-song-info ()
   (interactive)
