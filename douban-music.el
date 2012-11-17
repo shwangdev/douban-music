@@ -19,7 +19,10 @@
 This store is a containner which pulls data from remote server, and
 feed data to music player")
 
-(defcustom douban-music-server "http://douban.fm/j/mine/playlist?type=n&channel=2"
+(defvar channel-number (random 1000))
+
+(defcustom douban-music-server (concat  "http://douban.fm/j/mine/playlist?type=n&channel="  
+				      (number-to-string channel-number))
   "douban server url address"
   :group 'douban-music)
 
@@ -75,7 +78,10 @@ feed data to music player")
   "Pop up a muisc from local music store"
   (let ((song))
     ( if (eq nil local-music-store )
-        (douban-music-fetch-songs-from-server)
+	(progn 
+	  (douban-music-fetch-songs-from-server)
+	  (setq channel-number (1+ channel-number))
+	  )
       )
     (if (eq nil local-music-store)
         (error "Fail to fetch muiscs from douban music server"))
@@ -144,5 +150,8 @@ feed data to music player")
    princ current-song   
    )
   )
+
+(global-set-key (kbd "C-c p")     'douban-music-play-next-song)
+(global-set-key (kbd "C-c P")     'douban-music-stop-play)
 
 (provide 'douban-music)
