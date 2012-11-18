@@ -19,9 +19,9 @@
 This store is a containner which pulls data from remote server, and
 feed data to music player")
 
-(defvar channel-number (random 1000))
+(defvar channel-number (random 20))
 
-(defcustom douban-music-server (concat  "http://douban.fm/j/mine/playlist?type=n&channel="  
+(defcustom douban-music-server (concat "http://douban.fm/j/mine/playlist?type=n&channel="  
 				      (number-to-string channel-number))
   "douban server url address"
   :group 'douban-music)
@@ -31,6 +31,7 @@ feed data to music player")
 )
 
 (defun douban-music-fetch-songs-from-server ()
+  (interactive)
   "Get next songs from douban server"
   (let ((url douban-music-server)
         (url-request-method "GET")
@@ -49,10 +50,11 @@ feed data to music player")
                               (buffer-substring
                                (line-beginning-position)
                                (point-max))))))
-
       ( if (vectorp json)
           (copy-to-local-store json)
-        (error "Invalid data format")
+        (progn
+	  (error "Invalid data format")
+	  )
         )
       )
     (kill-buffer buffer)
@@ -80,7 +82,7 @@ feed data to music player")
     ( if (eq nil local-music-store )
 	(progn 
 	  (douban-music-fetch-songs-from-server)
-	  (setq channel-number (1+ channel-number))
+	  (setq channel-number (random 20))
 	  )
       )
     (if (eq nil local-music-store)
